@@ -5,8 +5,7 @@ import { getProjectsData } from '../lib/projects';
 
 export async function getStaticProps() {
   const allProjectsData = await getProjectsData();
-  return {
-    props: { allProjectsData }
+  return { props: { allProjectsData }
   };
 }
 
@@ -16,7 +15,7 @@ export default function Home({ allProjectsData }) {
       <Head>
         <title>Akash Network Ecosystem</title>
         <meta name="description" content="Browse and search projects hosted on Akash Network" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
 
       <main className="container mx-auto">
@@ -30,7 +29,7 @@ export default function Home({ allProjectsData }) {
                 Akash Ecosystem
               </p>
               <p className="max-w-xl mt-5 mx-auto text-xl text-gray-500">
-                Browse and search projects hosted on Akash Network.
+                Browse and search projects built on Akash Network.
               </p>
             </div>
           </div>
@@ -45,7 +44,9 @@ export default function Home({ allProjectsData }) {
                     <div className='className="flex-1 truncate"'>
                       <div className="flex items-left space-x-3">
                         <h3 className="text-gray-900 text-xl font-medium truncate">{item.name}</h3>
+                      <span className="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-md font-medium bg-green-100 rounded-full"> {item.category} </span>
                       </div>
+                      <p className="mt-1 text-gray-500 text-sm">{item.description}</p>
                     </div>
                   </div>
                 </a>

@@ -7,7 +7,9 @@ Web application to browse and search projects powered by Akash Network. Build us
 The simplest way to run locally is using Docker:
 
 ```sh
-docker run -it --rm -e NODE_ENV=production -p 8080:3000 ghcr.io/gosuri/akash-treasury
+
+docker run -it --rm -e NODE_ENV=production -p 8080:3000 ghcr.io/gosuri/akash-ecosystem
+
 ```
 Open [http://localhost:8080](http://localhost:8080) with your browser to see the result.
 
@@ -35,7 +37,7 @@ Outline to deploy on Akash:
 
 ### Install Buildpack
 
-Install Buildpack using Homebrew: 
+Install [Buildpacks](https://buildpacks.io) using Homebrew: 
 
 ```
 brew install buildpacks/tap/pack
@@ -59,17 +61,17 @@ export IMAGE=akash-ecosystem
 
 ### Build Container Image using Buildpacks
 
-Build the image using the Heroku build pack
+Use `make pack` to build the image or manually Build the image using Buildpacks with the Heroku build pack:
 
 ```
-export VERSION=$(git rev-parse --short HEAD)
-pack build ghcr.io/${OWNER}/${IMAGE}:${VERSION} --builder heroku/buildpacks:20 --env "NODE_ENV=production"
+
+pack build ghcr.io/${OWNER}/${IMAGE} --builder heroku/buildpacks:20 --env "NODE_ENV=production"
 ```
 
 Test the image by running docker locally.
 
 ```
-docker run -it --rm -e NODE_ENV=production -p 8080:3000 ghcr.io/${OWNER}/${IMAGE}:${VERSION}
+docker run -it --rm -e NODE_ENV=production -p 8080:3000 ghcr.io/${OWNER}/${IMAGE}
 ```
 
 Verify by visiting http://localhost:8080 in your browser
@@ -78,12 +80,16 @@ Verify by visiting http://localhost:8080 in your browser
 
 Check out the instructions in this [guide](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for authenticating to Github Container Registry.
 
-```
-docker push ghcr.io/${OWNER}/${IMAGE}:${VERSION}
 
-# latest image optionally
-docker tag ghcr.io/${OWNER}/${IMAGE}:${VERSION} ghcr.io/${OWNER}/${IMAGE}:latest
+```
+# push the latest version
 docker push ghcr.io/${OWNER}/${IMAGE}:latest
+
+# push the versioned image
+
+export VERSION=$(git rev-parse --short HEAD)
+docker tag ghcr.io/${OWNER}/${IMAGE}:latest ghcr.io/${OWNER}/${IMAGE}:${VERSION} 
+docker push ghcr.io/${OWNER}/${IMAGE}:${VERSION} 
 ```
 
 ### Generating SDL

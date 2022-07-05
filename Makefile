@@ -6,10 +6,11 @@ VERSION := $(shell git rev-parse --short HEAD)-$(RANDOM)
 build: pack publish gen-sdl
 
 pack:
-	pack build ghcr.io/$(OWNER)/$(IMAGE) --builder heroku/buildpacks:20 --env "NODE_ENV=production" --cache-image ghcr.io/$(OWNER)/$(IMAGE):latest --publish
+	pack build ghcr.io/$(OWNER)/$(IMAGE) --builder heroku/buildpacks:20 --env "NODE_ENV=production" 
 
 publish:
 	docker tag ghcr.io/$(OWNER)/$(IMAGE):latest ghcr.io/$(OWNER)/$(IMAGE):$(VERSION)
+	docker push ghcr.io/$(OWNER)/$(IMAGE):latest
 	docker push ghcr.io/$(OWNER)/$(IMAGE):$(VERSION) 
 
 run:

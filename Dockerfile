@@ -1,1 +1,1 @@
-LABEL org.opencontainers.image.source="https://github.com/gosuri/akash-ecosystem"
+LABEL org.opencontainers.image.source https://github.com/gosuri/akash-ecosystem

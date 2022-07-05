@@ -7,7 +7,7 @@ Web application to browse and search projects powered by Akash Network. Build us
 The simplest way to run locally is using Docker:
 
 ```sh
-docker run -it --rm -e NODE_ENV=production -p 8080:3000 ghcr.io/gosuri/akash-ecosystem
+docker run -it --rm -e NODE_ENV=production -p 8080:3000 ghcr.io/gosuri/akash-treasury
 ```
 Open [http://localhost:8080](http://localhost:8080) with your browser to see the result.
 
@@ -30,6 +30,8 @@ Outline to deploy on Akash:
 1. Publish Container Image.
 1. Generate SDL file.
 1. Deploy on Akash.
+
+**Pro Tip**: Running `make` will run steps 1-3.
 
 ### Install Buildpack
 

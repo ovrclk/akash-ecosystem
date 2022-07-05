@@ -14,7 +14,7 @@ services:
   # The name of the service "web"
   web:
     # The docker container image with version. You must specify a version, the "latest" tag doesn't work.
-    image: ghcr.io/gosuri/akash-ecosystem:a9d62ba
+    image: ghcr.io/gosuri/akash-ecosystem:3ee1dc8-15140
     # You can map ports here https://docs.akash.network/intro-to-akash/stack-definition-language#services.expose
     expose:
       - port: 3000

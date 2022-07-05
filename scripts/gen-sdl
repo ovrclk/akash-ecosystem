@@ -1,0 +1,6 @@
+#!/bin/bash
+
+eval "cat <<EOF
+$(<sdl.yml.tmpl)
+EOF
+" 2> /dev/null > sdl.yml

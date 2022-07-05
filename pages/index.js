@@ -50,7 +50,7 @@ export default function Home({ allProjectsData }) {
               {/* <Link href={`/projects/${item.id}`}>
                 <a> */}
                   <div className="w-full flex items-center justify-left p-6 space-x-6">
-                    <img className="w-20 h-20 bg-gray-300 rounded-lg" src={item.logo_square}></img>
+                    <Image className="w-20 h-20 bg-gray-300 rounded-lg" src={item.logo_square} width="80" height="80"></Image>
                     <div className='className="flex-1 truncate"'>
                       <div className="flex items-left space-x-3">
                         <h3 className="text-gray-900 text-xl font-medium truncate">{item.name}</h3>

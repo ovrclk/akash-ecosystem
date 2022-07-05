@@ -53,7 +53,6 @@ or manually:
 ```
 export OWNER=${USER}
 export IMAGE=akash-ecosystem
-export VERSION=$(git rev-parse --short HEAD)
 ```
 
 ### Build Container Image using Buildpacks
@@ -61,8 +60,8 @@ export VERSION=$(git rev-parse --short HEAD)
 Build the image using the Heroku build pack
 
 ```
+export VERSION=$(git rev-parse --short HEAD)
 pack build ghcr.io/${OWNER}/${IMAGE}:${VERSION} --builder heroku/buildpacks:20 --env NODE_ENV=production
-docker tag ghcr.io/${OWNER}/${IMAGE}:${VERSION} ghcr.io/${OWNER}/${IMAGE}:latest
 ```
 
 Test the image by running docker locally.
@@ -79,6 +78,9 @@ Check out the instructions in this [guide](https://docs.github.com/en/packages/w
 
 ```
 docker push ghcr.io/${OWNER}/${IMAGE}:${VERSION}
+
+# latest image optionally
+docker tag ghcr.io/${OWNER}/${IMAGE}:${VERSION} ghcr.io/${OWNER}/${IMAGE}:latest
 docker push ghcr.io/${OWNER}/${IMAGE}:latest
 ```
 
@@ -88,7 +90,7 @@ docker push ghcr.io/${OWNER}/${IMAGE}:latest
 eval "cat <<EOF
 $(<sdl.yml.tmpl)
 EOF
-" 2> /dev/null
+" 2> /dev/null > sdl.yml
 ```
 
 ### Deploying on to Akash

@@ -25,6 +25,7 @@ export default function Home({ allProjectsData }) {
         <meta property="og:image" content="/images/og-image.png"/>
         <meta property="og:description" content="Browse and search projects hosted on Akash Network."/>
         <meta property="og:site_name" content="The Akash Network Ecosystem"></meta>
+        <meta property="og:title" content="The Akash Network Ecosystem"></meta>
       </Head>
 
       <main className="container mx-auto">

@@ -14,14 +14,11 @@ services:
   # The name of the service "web"
   web:
     # The docker container image with version. You must specify a version, the "latest" tag doesn't work.
-    image: ghcr.io/gosuri/akash-ecosystem:03c18ad
+    image: ghcr.io/gosuri/akash-ecosystem:a9d62ba
     # You can map ports here https://docs.akash.network/intro-to-akash/stack-definition-language#services.expose
     expose:
       - port: 3000
         as: 80
-        accept:
-          - ecosystem.akash.network
-          - akasheco.gregosuri.com
         to:
           - global: true
 

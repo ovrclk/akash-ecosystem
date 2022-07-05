@@ -1,13 +1,13 @@
 # akash-ecosystem
 
-Web application to browse and search projects powered by Akash Network. Build using Next.JS and Tailwind. This application is static during runtime and uses Airtable Base [Akash Ecosystem](https://airtable.com/appHcQU9gd0RCCeJS/tblVKFGLk9f03GzEW) as the canonical source for project data during build time.
+Web application to browse and search projects powered by Akash Network. Build using Next.JS and Tailwind. This application is static during runtime and uses Airtable Base [Akash Ecosystem](https://airtable.com/shrrBXKJbvoawD8HS) as the canonical source for project data during build time.
 
 ## Run
 
 The simplest way to run locally is using Docker:
 
 ```sh
-docker run -it --rm -e NODE_ENV=production -p 8080:3000 ghcr.io/gosuri/akash-treasury
+docker run -it --rm -e NODE_ENV=production -p 8080:3000 ghcr.io/gosuri/akash-ecosystem
 ```
 Open [http://localhost:8080](http://localhost:8080) with your browser to see the result.
 
@@ -61,7 +61,7 @@ Build the image using the Heroku build pack
 
 ```
 export VERSION=$(git rev-parse --short HEAD)
-pack build ghcr.io/${OWNER}/${IMAGE}:${VERSION} --builder heroku/buildpacks:20 --env NODE_ENV=production
+pack build ghcr.io/${OWNER}/${IMAGE}:${VERSION} --builder heroku/buildpacks:20 --env "NODE_ENV=production"
 ```
 
 Test the image by running docker locally.

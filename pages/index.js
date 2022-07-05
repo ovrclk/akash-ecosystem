@@ -29,7 +29,7 @@ export default function Home({ allProjectsData }) {
                 Akash Ecosystem
               </p>
               <p className="max-w-xl mt-5 mx-auto text-xl text-gray-500">
-                Browse and search projects built on Akash Network.
+                Browse and search projects powered by Akash Network.
               </p>
             </div>
           </div>
@@ -37,8 +37,8 @@ export default function Home({ allProjectsData }) {
         <ul role="list" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {allProjectsData.map((item) =>
             <li key={item.id} className="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200">
-              <Link href={`/projects/${item.id}`}>
-                <a>
+              {/* <Link href={`/projects/${item.id}`}>
+                <a> */}
                   <div className="w-full flex items-center justify-left p-6 space-x-6">
                     <img className="w-20 h-20 bg-gray-300 rounded-lg" src={item.logo_square}></img>
                     <div className='className="flex-1 truncate"'>
@@ -49,8 +49,8 @@ export default function Home({ allProjectsData }) {
                       <p className="mt-1 text-gray-500 text-sm">{item.description}</p>
                     </div>
                   </div>
-                </a>
-              </Link>
+                {/* </a>
+              </Link> */}
             </li>
           )}
         </ul>

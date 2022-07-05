@@ -16,6 +16,15 @@ export default function Home({ allProjectsData }) {
         <title>Akash Network Ecosystem</title>
         <meta name="description" content="Browse and search projects hosted on Akash Network" />
         <link rel="icon" href="/favicon.png" />
+        <meta name="twitter:card" content="summary_large_image"></meta>
+        <meta name="twitter:site" content="@akashnet_"></meta>
+        <meta name="twitter:creator" content="@akashnet_"></meta>
+        <meta property="og:image:width" content="1200"></meta>
+        <meta property="og:image:height" content="630"></meta>
+        <meta property="og:image:alt" content="The Akash Network Ecosystem"></meta>
+        <meta property="og:image" content="/images/og-image.png"/>
+        <meta property="og:description" content="Browse and search projects hosted on Akash Network."/>
+        <meta property="og:site_name" content="The Akash Network Ecosystem"></meta>
       </Head>
 
       <main className="container mx-auto">

@@ -19,6 +19,8 @@ services:
     expose:
       - port: 3000
         as: 80
+        accept:
+          - ecosystem.akash.network
         to:
           - global: true
 

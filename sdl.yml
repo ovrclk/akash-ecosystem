@@ -14,7 +14,7 @@ services:
   # The name of the service "web"
   web:
     # The docker container image with version. You must specify a version, the "latest" tag doesn't work.
-    image: ghcr.io/gosuri/akash-ecosystem:c9f7885-15457
+    image: ghcr.io/gosuri/akash-ecosystem:6dd0dc5-13805
     # You can map ports here https://docs.akash.network/intro-to-akash/stack-definition-language#services.expose
     expose:
       - port: 3000
@@ -44,6 +44,11 @@ profiles:
 # https://docs.akash.network/intro-to-akash/stack-definition-language#profiles.placement
   placement:
     dcloud:
+      attributes:
+        host: akash
+      signedBy:
+        anyOf:
+          - "akash1365yvmc4s7awdyj3n2sav7xfx76adc6dnmlx63"
       pricing:
         # The name of the service
         web:

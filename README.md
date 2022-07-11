@@ -1,6 +1,6 @@
 # akash-ecosystem
 
-Web application to browse and search projects powered by Akash Network. Build using Next.JS and Tailwind. This application is static during runtime and uses Airtable Base [Akash Ecosystem](https://airtable.com/shrrBXKJbvoawD8HS) as the canonical source for project data during build time.
+Web application to browse and search projects powered by Akash Network. Built using Next.JS and Tailwind. This application is static during runtime and uses Airtable Base [Akash Ecosystem](https://airtable.com/shrrBXKJbvoawD8HS) as the canonical source for project data during build time.
 
 ## Run
 
@@ -101,7 +101,7 @@ EOF
 " 2> /dev/null > sdl.yml
 ```
 
-### Deploying on to Akash
+## Deploying on to Akash
 
 Follow this [guide](https://docs.akash.network/guides/cli/detailed-steps) for deploying Akash using the generated SDL to create the Deployment transaction and send the manifest to the provider.
 
@@ -111,32 +111,24 @@ akash tx deployment create sdl.yml
 akash provider send-manifest sdl.yml --provider PROVIDER
 ```
 
-### Using the CLI
-
-#### Setup your environment
+### Setup your environment
 
 You need to set the below set of variables
 
 | Variable | Description | TX | Recommended Value
 | -- | -- | -- | --
-| AKASH_HOME | Home directory for Akash Data | Create, Update | .akash
 | AKASH_NODE | Akash RPC Node to connect to. [Cosmos Directory](https://cosmos.directory/akash/nodes) has a good set of public endpoints to use | Create, Update | https://rpc.prod.ewr1.akash.farm:443/token/YOOCH5OV/
 | AKASH_GAS | Gas limit to set per-transaction; set to "auto" to calculate sufficient gas automatically | Create, Update | auto
 | AKASH_GAS_ADJUSTMENT | Adjustment factor to be multiplied against the estimate returned by the tx simulation | Create, Update | 1.15
 | AKASH_GAS_PRICES | Gas prices in decimal format to determine the transaction fee | Create, Update | 0.025uakt
 | AKASH_SIGN_MODE | Signature mode | Create, Update | amino-json
 | AKASH_CHAIN_ID | The network chain ID | Create, Update | akashnet-2
-| AKASH_FROM | Name or address of private key with which to sign | Create, Update | AKASH_GITHUB_RUNNER
-| AKASH_KEYRING_BACKEND | Select keyring's backend | Create, Update |  test
-| AKASH_PROVIDER | Provider ID the deployment is present on | Update | akash1q7spv2cw06yszgfp4f9ed59lkka6ytn8g4tkjf
-| AKASH_DSEQ | Deployment Sequence Number | Update | 5080238
 
 
-Create an environment file `.akash.env` with the variables
+Create an environment file `.akash/ENV` with the variables
 
 ```
-cat > .akash.env <<EOF
-export AKASH_HOME=.akash
+cat > .akash/ENV <<EOF
 export AKASH_NODE=https://rpc.prod.ewr1.akash.farm:443/token/YOOCH5OV/
 export AKASH_GAS=auto
 export AKASH_GAS_ADJUSTMENT=1.25
@@ -145,7 +137,7 @@ export AKASH_CHAIN_ID=akashnet-2
 export AKASH_SIGN_MODE=amino-json
 EOF
 
-source .akash.env
+source .akash/ENV
 ```
 
 You will need an AKT wallet to pay for the deployment. However, it is best practice to have two wallets, one for deployment with minimal funds for gas fees and one wallet with the funds that authorize the deploy wallet to use its funds.
@@ -198,6 +190,24 @@ akash keys add payment
 
 Fund your `payment` wallet from a supported exchange. [Osmosis](https://app.osmosis.zone/?from=USDC&to=AKT) is a preferred Decentralized Exchange.
 
+### Fund your Deploy Wallet for Gas
+
+Send 10 AKT to your deploy wallet from your payment wallet for Gas.
+
+```sh
+akash tx send payment $(akash keys show deploy -a) 10000000uakt
+```
+
+### Generate Certificate
+
+A certificate is required to deploy to Akash. [Generate and publish](https://docs.akash.network/guides/cli/detailed-steps/part-6.-create-your-certificate) one using the command below:
+
+```sh
+akash tx cert generate client --from deploy
+
+akash tx cert publish client --from deploy
+```
+
 ### Authorize Deploy Wallet with Payment Wallet
 
 [Authorized Spend](https://docs.akash.network/features/authorized-spend) allows users to authorize spend of a set number of tokens from a source wallet to a destination, funded wallet using a feature called AuthZ with below command:
@@ -209,12 +219,106 @@ akash tx deployment authz grant DEPLOY_WALLET AMOUNT --from PAYMENT_WALLET
 Replace `DEPLOY_WALLET`, `AMOUNT` and `PAYMENT_WALLET` with actual values. Example:
 
 ```sh
-akash tx deployment authz grant akash1qpcfealqyc9l9e089qd6ka2a25yy664q2aglmx 50000000uakt --from payment
+akash tx deployment authz grant $(akash keys show deploy -a) 50000000uakt --from payment
 ```
 
 In the above example, I'm authorizing deploy wallet with address `akash1qpcfealqyc9l9e089qd6ka2a25yy664q2aglmx` to spend up to 50 AKT from my `payment` wallet.
 
+You can verify the grant using:
+
+```
+akash query authz grants $(akash keys show payment -a) $(akash keys show deploy -a)
+```
+
+You should see a response similar to:
+
+```
+grants:
+- authorization:
+    '@type': /akash.deployment.v1beta2.DepositDeploymentAuthorization
+    spend_limit:
+      amount: "50000000"
+      denom: uakt
+  expiration: "2023-07-11T04:21:26Z"
+pagination:
+  next_key: null
+  total: "0"
+```
+
+### Deployment Sequence (DSEQ)
+
+Deployments on Akash are identified using a unique integer called deployment sequence (DSEQ). You can set the DSEQ in the deployment, or one will be generated for you. We will pre-set the DSEQ in this guide for simpler operations using a random number and save it `.akash/DSEQ`.
+
+```sh
+echo $(($(date +"%Y%m%d") + ${RANDOM})) > .akash/DSEQ
+```
 
 ### Create Deployment Transaction
 
 Ensure your SDL file is ready; see the above sections on guides to build one.
+
+```sh
+akash tx deployment create sdl.yml --dseq $(cat .akash/DSEQ) --from deploy --depositor-account $(akash keys show payment -a)
+```
+
+Optionally, you can list your deployment using:
+
+```sh
+akash query deployment list --state active --owner $(akash keys show deploy -a)
+```
+
+### Create Lease 
+
+The command below will display the open bids for your deployment:
+
+```sh
+akash query market bid list --owner=$(akash keys show deploy -a) --dseq $(cat .akash/DSEQ) --state open
+```
+
+These bids will expire in about 5 minutes; pick a provider to create a lease. To simplify operations, save the provider in `.akash/PROVIDER` file:
+
+```sh
+echo "akash1lywpn4nkj37l2yqmrxaqdq485qz2auwats3qud" > .akash/PROVIDER
+```
+
+Create a lease with the provider using the below command:
+
+```sh
+akash tx market lease create --from deploy --dseq $(cat .akash/DSEQ) --provider $(cat .akash/PROVIDER)
+```
+
+### Upload Manifest
+
+The next step is to send the deploy manifest to complete the deployment. Deploy manifest contains sensitive information you share with the provider, like the container image and the configuration variables. Run the below command to send the manifest:
+
+```sh
+akash provider send-manifest --provider $(cat .akash/PROVIDER) --dseq $(cat .akash/DSEQ) --from deploy sdl.yml 
+```
+
+### Check Lease Status
+
+Each deployment on Akash has a unique URL that allows you to access the application.  You can access the endpoints by querying for the lease status.
+
+Please note the deployment takes a few seconds to pull the container image and start the container, during which time you will receive a 503 error.
+
+Check the latest status using the below command:
+
+```sh
+akash provider lease-status --provider $(cat .akash/PROVIDER) --dseq $(cat .akash/DSEQ) --from deploy
+```
+
+### Closing your Deployment (Optional)
+
+Optionally, you can close the deployment using the below command:
+
+```sh
+akash tx deployment close --dseq $(cat .akash/DSEQ) --owner $(akash keys show deploy -a) --from deploy
+```
+
+### Updating your Deployment 
+
+TBD
+
+### Setting Github Actions to auto deploy on Git push
+
+TBD

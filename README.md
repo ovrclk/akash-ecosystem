@@ -110,3 +110,89 @@ akash tx deployment create sdl.yml
 ...
 akash provider send-manifest sdl.yml --provider PROVIDER
 ```
+
+### Using the CLI
+
+#### Setup your environment
+
+You need to set the below set of variables
+
+| Variable | Description | TX | Recommended Value
+| -- | -- | -- | --
+| AKASH_HOME | Home directory for Akash Data | Create, Update | .akash
+| AKASH_NODE | Akash RPC Node to connect to. [Cosmos Directory](https://cosmos.directory/akash/nodes) has a good set of public endpoints to use | Create, Update | https://rpc.prod.ewr1.akash.farm:443/token/YOOCH5OV/
+| AKASH_GAS | Gas limit to set per-transaction; set to "auto" to calculate sufficient gas automatically | Create, Update | auto
+| AKASH_GAS_ADJUSTMENT | Adjustment factor to be multiplied against the estimate returned by the tx simulation | Create, Update | 1.15
+| AKASH_GAS_PRICES | Gas prices in decimal format to determine the transaction fee | Create, Update | 0.025uakt
+| AKASH_SIGN_MODE | Signature mode | Create, Update | amino-json
+| AKASH_CHAIN_ID | The network chain ID | Create, Update | akashnet-2
+| AKASH_FROM | Name or address of private key with which to sign | Create, Update | AKASH_GITHUB_RUNNER
+| AKASH_KEYRING_BACKEND | Select keyring's backend | Create, Update |  test
+| AKASH_PROVIDER | Provider ID the deployment is present on | Update | akash1q7spv2cw06yszgfp4f9ed59lkka6ytn8g4tkjf
+| AKASH_DSEQ | Deployment Sequence Number | Update | 5080238
+
+
+Create an environment file `.akash.env` with the variables
+
+```
+cat > .akash.env <<EOF
+export AKASH_HOME=.akash
+export AKASH_NODE=https://rpc.prod.ewr1.akash.farm:443/token/YOOCH5OV/
+export AKASH_GAS=auto
+export AKASH_GAS_ADJUSTMENT=1.25
+export AKASH_GAS_PRICES=0.025uakt
+export AKASH_CHAIN_ID=akashnet-2
+export AKASH_SIGN_MODE=amino-json
+EOF
+
+source .akash.env
+```
+
+You will need an AKT wallet to pay for the deployment. However, it is best practice to have two wallets, one for deployment with minimal funds for gas fees and one wallet with the funds that authorize the deploy wallet to use its funds.
+
+##### Setup Payment and Deploy Wallet
+
+Generate your Payment wallet if you do not have one using:
+
+```sh
+akash keys add payment
+```
+
+You'll see an output similar to:
+```
+- name: payment
+  type: local
+  address: akash1qpcfealqyc9l9e089qd6ka2a25yy664q2aglmx
+  pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Awil3peyeAazEveyoHlrHLFOFrVi0tLSbn0PMQPlvyT2"}'
+  mnemonic: ""
+
+
+**Important** write this mnemonic phrase in a safe place.
+It is the only way to recover your account if you ever forget your password.
+
+glue legal tomorrow puppy step gift clinic account happy devote wet again laundry canvas produce task fever cool alarm flush trigger pigeon rule surface
+```
+
+The last line is the mnemonic phrase that you should secure in a safe place. It is the only way to recover your account if you ever forget your password.
+
+If you already have a payment wallet, import using the below:
+
+```sh
+echo MNEMONIC_PHRASE | akash keys add --recover payment 
+```
+
+Replace `MNEMONIC_PHRASE` with your actual value. Example:
+
+```sh
+echo "glue legal tomorrow puppy step gift clinic account happy devote wet again laundry canvas produce task fever cool alarm flush trigger pigeon rule surface" | akash keys add --recover payment
+```
+
+Generate your deploy wallet using:
+
+```sh
+akash keys add deploy
+```
+
+##### Funding
+
+Fund your `deploy` wallet from a Supported Exchange. [Osmosis](https://app.osmosis.zone/?from=USDC&to=AKT) is a preferred Decentralized Exchange.

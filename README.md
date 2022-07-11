@@ -150,17 +150,18 @@ source .akash.env
 
 You will need an AKT wallet to pay for the deployment. However, it is best practice to have two wallets, one for deployment with minimal funds for gas fees and one wallet with the funds that authorize the deploy wallet to use its funds.
 
-##### Setup Payment and Deploy Wallet
+### Setup Payment and Deploy Wallet
 
-Generate your Payment wallet if you do not have one using:
+Generate your Deploy wallet if you do not have one using:
 
 ```sh
-akash keys add payment
+akash keys add deploy
 ```
 
 You'll see an output similar to:
+
 ```
-- name: payment
+- name: deploy
   type: local
   address: akash1qpcfealqyc9l9e089qd6ka2a25yy664q2aglmx
   pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Awil3peyeAazEveyoHlrHLFOFrVi0tLSbn0PMQPlvyT2"}'
@@ -175,24 +176,45 @@ glue legal tomorrow puppy step gift clinic account happy devote wet again laundr
 
 The last line is the mnemonic phrase that you should secure in a safe place. It is the only way to recover your account if you ever forget your password.
 
-If you already have a payment wallet, import using the below:
+If you already have a deploy wallet, import using the below:
 
 ```sh
-echo MNEMONIC_PHRASE | akash keys add --recover payment 
+echo MNEMONIC_PHRASE | akash keys add --recover deploy
 ```
 
 Replace `MNEMONIC_PHRASE` with your actual value. Example:
 
 ```sh
-echo "glue legal tomorrow puppy step gift clinic account happy devote wet again laundry canvas produce task fever cool alarm flush trigger pigeon rule surface" | akash keys add --recover payment
+echo "glue legal tomorrow puppy step gift clinic account happy devote wet again laundry canvas produce task fever cool alarm flush trigger pigeon rule surface" | akash keys add --recover deploy
 ```
 
-Generate your deploy wallet using:
+Generate your payment wallet using:
 
 ```sh
-akash keys add deploy
+akash keys add payment
 ```
 
-##### Funding
+### Fund your Payment Wallet
 
-Fund your `deploy` wallet from a Supported Exchange. [Osmosis](https://app.osmosis.zone/?from=USDC&to=AKT) is a preferred Decentralized Exchange.
+Fund your `payment` wallet from a supported exchange. [Osmosis](https://app.osmosis.zone/?from=USDC&to=AKT) is a preferred Decentralized Exchange.
+
+### Authorize Deploy Wallet with Payment Wallet
+
+[Authorized Spend](https://docs.akash.network/features/authorized-spend) allows users to authorize spend of a set number of tokens from a source wallet to a destination, funded wallet using a feature called AuthZ with below command:
+
+```sh
+akash tx deployment authz grant DEPLOY_WALLET AMOUNT --from PAYMENT_WALLET
+```
+
+Replace `DEPLOY_WALLET`, `AMOUNT` and `PAYMENT_WALLET` with actual values. Example:
+
+```sh
+akash tx deployment authz grant akash1qpcfealqyc9l9e089qd6ka2a25yy664q2aglmx 50000000uakt --from payment
+```
+
+In the above example, I'm authorizing deploy wallet with address `akash1qpcfealqyc9l9e089qd6ka2a25yy664q2aglmx` to spend up to 50 AKT from my `payment` wallet.
+
+
+### Create Deployment Transaction
+
+Ensure your SDL file is ready; see the above sections on guides to build one.

@@ -5,7 +5,9 @@ VERSION := $(shell git rev-parse --short HEAD)-$(RANDOM)
 PROVIDER 	:= $(shell cat .akash/PROVIDER)
 DSEQ 			:= $(shell cat .akash/DSEQ)
 
-build: pack publish gen-sdl
+deploy: build update-deploy upload-manifest
+
+build: pack publish gen-sdl commit-sdl
 
 pack:
 	pack build ghcr.io/$(OWNER)/$(IMAGE) --builder heroku/buildpacks:20 --env "NODE_ENV=production" 
@@ -24,11 +26,16 @@ run:
 status:
 	akash provider lease-status --provider $(PROVIDER) --dseq $(shell cat .akash/DSEQ) --from deploy
 
-deploy: upload-manifest
-	akash tx deployment update --dseq $(DSEQ) --from deploy sdl.yml
+
+update-deploy:
+	akash tx deployment update --dseq $(DSEQ) --from deploy sdl.yml -y
 
 upload-manifest:
 	akash provider send-manifest --provider $(PROVIDER) --dseq $(DSEQ) --from deploy sdl.yml
+
+commit-sdl:
+	git add sdl.yml
+	git commit -sam '(deploy): update sdl to version $(VERSION)'
 
 info:
 	@echo "DSEQ:     $(DSEQ)"

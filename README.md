@@ -61,18 +61,18 @@ brew install buildpacks/tap/pack
 (curl -sSL "https://github.com/buildpacks/pack/releases/download/v0.27.0/pack-v0.27.0-linux.tgz" | sudo tar -C /usr/local/bin/ --no-same-owner -xzv pack)
 ```
 
-### Setup Environment
+### Build Container Image using Buildpacks
 
-1. The `OWNER` environment variable should be your GitHub user name.
-1. `IMAGE` is the name of the container image for the build.
-1. `VERSION` is the short Git version hash.
+We will use `ghcr.io/OWNER/IMAGE`
+
+1. The `OWNER` environment variable should be your GitHub user name. In my case `gosuri`
+1. `IMAGE` is the name of the container image for the build. In ourcase we're deploying `akash-ecosystem`
+
 
 ```sh
 export OWNER=${USER}
 export IMAGE=akash-ecosystem
 ```
-
-### Build Container Image using Buildpacks
 
 Use `make pack` to build the image or manually Build the image using Buildpacks with the Heroku build pack:
 
@@ -129,19 +129,18 @@ akash provider send-manifest sdl.yml --provider PROVIDER
 
 ### Setup your environment
 
-You need to set the below set of variables
+Please set the below set of environment variables
 
-| Variable | Description | TX | Recommended Value
-| -- | -- | -- | --
-| AKASH_NODE | Akash RPC Node to connect to. [Cosmos Directory](https://cosmos.directory/akash/nodes) has a good set of public endpoints to use | Create, Update | https://rpc.prod.ewr1.akash.farm:443/token/YOOCH5OV/
-| AKASH_GAS | Gas limit to set per-transaction; set to "auto" to calculate sufficient gas automatically | Create, Update | auto
-| AKASH_GAS_ADJUSTMENT | Adjustment factor to be multiplied against the estimate returned by the tx simulation | Create, Update | 1.15
+| Variable | Description | Recommended Value
+| -- | -- | -- |
+| AKASH_NODE | Akash RPC Node to connect to. [Cosmos Directory](https://cosmos.directory/akash/nodes) has a good set of public endpoints to use | `https://rpc.prod.ewr1.akash.farm:443/token/YOOCH5OV/`
+| AKASH_GAS | Gas limit to set per-transaction; set to "auto" to calculate sufficient gas automatically | `auto`
+| AKASH_GAS_ADJUSTMENT | Adjustment factor to be multiplied against the estimate returned by the tx simulation | `1.15`
 | AKASH_GAS_PRICES | Gas prices in decimal format to determine the transaction fee | Create, Update | 0.025uakt
-| AKASH_SIGN_MODE | Signature mode | Create, Update | amino-json
-| AKASH_CHAIN_ID | The network chain ID | Create, Update | akashnet-2
+| AKASH_SIGN_MODE | Signature mode | `amino-json`
+| AKASH_CHAIN_ID | The network chain ID | `akashnet-2`
 
-
-Create an environment file `.akash/ENV` with the variables
+Create an environment file `.akash/ENV` with the variables for easier operations using:
 
 ```
 cat > .akash/ENV <<EOF

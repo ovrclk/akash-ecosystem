@@ -136,7 +136,7 @@ Please set the below set of environment variables
 | AKASH_NODE | Akash RPC Node to connect to. [Cosmos Directory](https://cosmos.directory/akash/nodes) has a good set of public endpoints to use | `https://rpc.prod.ewr1.akash.farm:443/token/YOOCH5OV/`
 | AKASH_GAS | Gas limit to set per-transaction; set to "auto" to calculate sufficient gas automatically | `auto`
 | AKASH_GAS_ADJUSTMENT | Adjustment factor to be multiplied against the estimate returned by the tx simulation | `1.15`
-| AKASH_GAS_PRICES | Gas prices in decimal format to determine the transaction fee | Create, Update | 0.025uakt
+| AKASH_GAS_PRICES | Gas prices in decimal format to determine the transaction fee | `0.025uakt`
 | AKASH_SIGN_MODE | Signature mode | `amino-json`
 | AKASH_CHAIN_ID | The network chain ID | `akashnet-2`
 

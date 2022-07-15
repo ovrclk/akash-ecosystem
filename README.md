@@ -23,9 +23,9 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Deploying to Akash
+## Deploying to Production
 
-Outline to deploy on Akash:
+This is a guide to containerizing [Next JS](https://nextjs.org/) application and deploying on [Akash](https://akash.network) in a non-custodial way. Akash is a permissionless and censorship-resistant cloud network that guarantees sovereignty over your data and applications. With Akash, you’re in complete control of all aspects of the life cycle of an application with no intermediary. Outline of Steps to deploy on Akash:
 
 1. Setup Buildpack locally.
 1. Build Container Image.
@@ -33,18 +33,31 @@ Outline to deploy on Akash:
 1. Generate SDL file.
 1. Deploy on Akash.
 
-**Pro Tip**: Running `make` will run steps 1-3.
+**Pro Tip**: Checkout the `Makefile` for tasks that automates the workflow. `make build` and `make deploy` cover steps 2-5.
 
-### Install Buildpack
+## Before We Begin
 
-Install [Buildpacks](https://buildpacks.io) using Homebrew: 
+This technical guide best suits a reader with basic Linux command line knowledge. The audience for this guide is intended for includes:
 
-```
+* Application developers with little or no systems administration experience want to deploy applications on the decentralized cloud.
+* System administrators with little or no experience with infrastructure automation want to learn more.
+* Infrastructure automation engineers that want to explore decentralized cloud.
+* Anyone who wants to get a feel for the current state of the decentralized cloud ecosystem.
+
+You will need the below set up before we begin:
+
+1) Install Akash: Make sure to have the Akash client installed on your workstation, check [install guide](https://docs.akash.network/guides/cli/detailed-steps/part-1.-install-akash) for instructions.
+1) Choose Your Akash Network: You'll need to know information about the network you're connecting your node to. See [Choosing a Network](https://docs.akash.network/guides/version) for how to obtain any network-related information.
+1) Fund Your Account: You'll need a AKT wallet with funds to pay for your deployment. See the [funding guide](https://docs.akash.network/guides/cli/detailed-steps/part-3.-fund-your-account) creating a key and funding your account.
+1) Install Docker: You'll need docker running on your workstation; follow this [guide](https://docs.docker.com/get-docker/)](https://docs.docker.com/get-docker/) to setup Docker on your workstation..
+1) Setup Container Registry: To stage your containers to deploy onto Akash. We'll be using GitHub Container Registry in this guide. 
+1) Setup Builpacks.io: Builpacks.io is a Cloud Native Buildpacks that transform your application source code into images that can run on any cloud. Install `pack` tool using this comprehensive [guide](https://buildpacks.io/docs/tools/pack/#install) or install using the below:
+
+```sh
+# using Homebrew
 brew install buildpacks/tap/pack
-```
-or manually:
 
-```
+# or download directly
 (curl -sSL "https://github.com/buildpacks/pack/releases/download/v0.27.0/pack-v0.27.0-linux.tgz" | sudo tar -C /usr/local/bin/ --no-same-owner -xzv pack)
 ```
 
@@ -54,7 +67,7 @@ or manually:
 1. `IMAGE` is the name of the container image for the build.
 1. `VERSION` is the short Git version hash.
 
-```
+```sh
 export OWNER=${USER}
 export IMAGE=akash-ecosystem
 ```
@@ -63,8 +76,7 @@ export IMAGE=akash-ecosystem
 
 Use `make pack` to build the image or manually Build the image using Buildpacks with the Heroku build pack:
 
-```
-
+```sh
 pack build ghcr.io/${OWNER}/${IMAGE} --builder heroku/buildpacks:20 --env "NODE_ENV=production"
 ```
 
@@ -80,15 +92,19 @@ Verify by visiting http://localhost:8080 in your browser
 
 Check out the instructions in this [guide](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for authenticating to Github Container Registry.
 
+We use the Git short hash and a random postfix as the version to ensure the image is always new.
+
 
 ```
-# push the latest version
-docker push ghcr.io/${OWNER}/${IMAGE}:latest
+# set the verion
+export VERSION=$(git rev-parse --short HEAD)-${RANDOM}
 
-# push the versioned image
 
-export VERSION=$(git rev-parse --short HEAD)
+# tag the latest versioned image
 docker tag ghcr.io/${OWNER}/${IMAGE}:latest ghcr.io/${OWNER}/${IMAGE}:${VERSION} 
+
+# push the 'latest' and versioned images 
+docker push ghcr.io/${OWNER}/${IMAGE}:latest
 docker push ghcr.io/${OWNER}/${IMAGE}:${VERSION} 
 ```
 
@@ -324,8 +340,6 @@ make build # can skip if sdl file is manually updated
 
 akash tx deployment update --dseq $(cat .akash/DSEQ) --from deploy sdl.yml
 ```
-
-TBD
 
 ### Setting Github Actions to auto deploy on Git push
 

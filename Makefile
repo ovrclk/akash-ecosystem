@@ -2,6 +2,8 @@ OWNER   := $(shell bash -c 'echo $$USER')
 RANDOM  := $(shell bash -c 'echo $$RANDOM')
 IMAGE   := akash-ecosystem
 VERSION := $(shell git rev-parse --short HEAD)-$(RANDOM)
+PROVIDER 	:= $(shell cat .akash/PROVIDER)
+DSEQ 			:= $(shell cat .akash/DSEQ)
 
 build: pack publish gen-sdl
 
@@ -20,10 +22,16 @@ run:
 	docker run -it --rm -e NODE_ENV=production -p 8080:3000 ghcr.io/$(OWNER)/$(IMAGE)
 
 status:
-	akash provider lease-status --provider $(shell cat .akash/PROVIDER) --dseq $(shell cat .akash/DSEQ) --from deploy
+	akash provider lease-status --provider $(PROVIDER) --dseq $(shell cat .akash/DSEQ) --from deploy
+
+deploy: upload-manifest
+	akash tx deployment update --dseq $(DSEQ) --from deploy sdl.yml
+
+upload-manifest:
+	akash provider send-manifest --provider $(PROVIDER) --dseq $(DSEQ) --from deploy sdl.yml
 
 info:
-	@echo "DSEQ:     $(shell cat .akash/DSEQ)"
-	@echo "PROVIDER: $(shell cat .akash/PROVIDER)"
+	@echo "DSEQ:     $(DSEQ)"
+	@echo "PROVIDER: $(PROVIDER)"
 
 .PHONY: build pack image push-image gen-sdl

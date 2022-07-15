@@ -317,6 +317,14 @@ akash tx deployment close --dseq $(cat .akash/DSEQ) --owner $(akash keys show de
 
 ### Updating your Deployment 
 
+The below command updates the deployment when changes are in the SDL file. Run `make build` to rebuild the SDL with a new build.
+
+```sh
+make build # can skip if sdl file is manually updated
+
+akash tx deployment update --dseq $(cat .akash/DSEQ) --from deploy sdl.yml
+```
+
 TBD
 
 ### Setting Github Actions to auto deploy on Git push

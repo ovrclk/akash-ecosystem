@@ -1,6 +1,3 @@
-export AKASH_NODE=https://rpc.prod.ewr1.akash.farm:443/token/YOOCH5OV/
-export AKASH_GAS=auto
-export AKASH_GAS_ADJUSTMENT=1.25
-export AKASH_GAS_PRICES=0.025uakt
-export AKASH_CHAIN_ID=akashnet-2
-export AKASH_SIGN_MODE=amino-json
+NODE_ENV=production
+FOO=bar
+BAZ=ball

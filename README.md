@@ -63,27 +63,36 @@ brew install buildpacks/tap/pack
 
 ### Build Container Image using Buildpacks
 
-We will use `ghcr.io/OWNER/IMAGE`
+We will use `DOMAIN/OWNER/IMAGE` for the image name
 
+1. The domain is the hostname of the container registry. For Github, it is `ghcr.io`
 1. The `OWNER` environment variable should be your GitHub user name. In my case `gosuri`
 1. `IMAGE` is the name of the container image for the build. In ourcase we're deploying `akash-ecosystem`
+1. `BUILDER` is the cloud-native build pack we'll use to the build the container, for this guide we'll use standard heroku buildpack v20
 
+Save the image name in `.akash/IMAGE` and builder in `.akash/BUILDER` for simplifying operations.
 
 ```sh
-export OWNER=${USER}
-export IMAGE=akash-ecosystem
+echo -n "ghcr.io/gosuri/akash-ecosystem" > .akash/IMAGE
+echo -n "heroku/buildpacks:20" > .akash/BUILDER
+```
+
+Set the `NODE_ENV` environment variable to `production` for optimal builds and save it to `.akash/ENV`
+
+```sh
+echo -n "NODE_ENV=production" > .akash/ENV
 ```
 
 Use `make pack` to build the image or manually Build the image using Buildpacks with the Heroku build pack:
 
 ```sh
-pack build ghcr.io/${OWNER}/${IMAGE} --builder heroku/buildpacks:20 --env "NODE_ENV=production"
+pack build $(cat .akash/IMAGE) --builder $(cat .akash/BUILDER) --env-file .akash/ENV
 ```
 
 Test the image by running docker locally.
 
-```
-docker run -it --rm -e NODE_ENV=production -p 8080:3000 ghcr.io/${OWNER}/${IMAGE}
+```sh
+docker run -it --rm -e NODE_ENV=production -p 8080:3000 $(cat .akash/IMAGE)
 ```
 
 Verify by visiting http://localhost:8080 in your browser
@@ -92,20 +101,19 @@ Verify by visiting http://localhost:8080 in your browser
 
 Check out the instructions in this [guide](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for authenticating to Github Container Registry.
 
-We use the Git short hash and a random postfix as the version to ensure the image is always new.
+We use the Git short hash and a random postfix as the version to ensure the image is always new. Save this under `.akash/VERSION`
 
 
-```
+```sh
 # set the verion
-export VERSION=$(git rev-parse --short HEAD)-${RANDOM}
-
+echo -n $(git rev-parse --short HEAD)-${RANDOM} > .akash/VERSION
 
 # tag the latest versioned image
-docker tag ghcr.io/${OWNER}/${IMAGE}:latest ghcr.io/${OWNER}/${IMAGE}:${VERSION} 
+docker tag $(cat .akash/IMAGE) $(cat .akash/IMAGE):${VERSION} 
 
 # push the 'latest' and versioned images 
-docker push ghcr.io/${OWNER}/${IMAGE}:latest
-docker push ghcr.io/${OWNER}/${IMAGE}:${VERSION} 
+docker push $(cat .akash/IMAGE) 
+docker push $(cat .akash/IMAGE):${VERSION}
 ```
 
 ### Generating SDL
@@ -121,12 +129,6 @@ EOF
 
 Follow this [guide](https://docs.akash.network/guides/cli/detailed-steps) for deploying Akash using the generated SDL to create the Deployment transaction and send the manifest to the provider.
 
-```
-akash tx deployment create sdl.yml 
-...
-akash provider send-manifest sdl.yml --provider PROVIDER
-```
-
 ### Setup your environment
 
 Please set the below set of environment variables
@@ -140,19 +142,14 @@ Please set the below set of environment variables
 | AKASH_SIGN_MODE | Signature mode | `amino-json`
 | AKASH_CHAIN_ID | The network chain ID | `akashnet-2`
 
-Create an environment file `.akash/ENV` with the variables for easier operations using:
 
-```
-cat > .akash/ENV <<EOF
+```sh
 export AKASH_NODE=https://rpc.prod.ewr1.akash.farm:443/token/YOOCH5OV/
 export AKASH_GAS=auto
 export AKASH_GAS_ADJUSTMENT=1.25
 export AKASH_GAS_PRICES=0.025uakt
 export AKASH_CHAIN_ID=akashnet-2
 export AKASH_SIGN_MODE=amino-json
-EOF
-
-source .akash/ENV
 ```
 
 You will need an AKT wallet to pay for the deployment. However, it is best practice to have two wallets, one for deployment with minimal funds for gas fees and one wallet with the funds that authorize the deploy wallet to use its funds.

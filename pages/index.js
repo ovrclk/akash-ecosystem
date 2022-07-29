@@ -49,7 +49,7 @@ export default function Home({ allProjectsData }) {
         <ul role="list" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {allProjectsData.map((item) =>
             <li key={item.slug} className="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200">
-              {/* <Link href={`/projects/${item.slug}`}> */}
+              <Link href={`/projects/${item.slug}`}>
                 <a>
                   <div className="w-full flex items-center justify-left p-6 space-x-6">
                     <img className="w-20 h-20 bg-gray-300 rounded-lg" src={item.logo_square}></img>
@@ -62,7 +62,7 @@ export default function Home({ allProjectsData }) {
                     </div>
                   </div>
                 </a>
-              {/* </Link> */}
+              </Link>
             </li>
           )}
         </ul>

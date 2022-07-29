@@ -1,10 +1,10 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getProjectsData } from '../lib/projects';
+import { getEcosystemData } from '../lib/projects';
 
 export async function getStaticProps() {
-  const allProjectsData = await getProjectsData();
+  const allProjectsData = await getEcosystemData();
   return { props: { allProjectsData }
   };
 }
@@ -33,7 +33,9 @@ export default function Home({ allProjectsData }) {
           <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
             <div className="text-center">
               <div className="text-base font-semibold text-indigo-600 tracking-wide uppercase">
-                <Image src="/images/akash-red.svg" width="100" height="100"></Image>
+                <a href="https://akash.network">
+                  <Image src="/images/akash-red.svg" width="100" height="100"></Image>
+                </a>
               </div>
               <p className="mt-1 text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-7xl">
                 Akash Ecosystem
@@ -46,9 +48,9 @@ export default function Home({ allProjectsData }) {
         </div>
         <ul role="list" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {allProjectsData.map((item) =>
-            <li key={item.id} className="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200">
-              {/* <Link href={`/projects/${item.id}`}>
-                <a> */}
+            <li key={item.slug} className="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200">
+              {/* <Link href={`/projects/${item.slug}`}> */}
+                <a>
                   <div className="w-full flex items-center justify-left p-6 space-x-6">
                     <img className="w-20 h-20 bg-gray-300 rounded-lg" src={item.logo_square}></img>
                     <div className='className="flex-1 truncate"'>
@@ -59,8 +61,8 @@ export default function Home({ allProjectsData }) {
                       <p className="mt-1 text-gray-500 text-sm">{item.description}</p>
                     </div>
                   </div>
-                {/* </a>
-              </Link> */}
+                </a>
+              {/* </Link> */}
             </li>
           )}
         </ul>

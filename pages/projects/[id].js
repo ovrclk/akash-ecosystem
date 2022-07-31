@@ -1,5 +1,5 @@
 import { getProjectData, getProjectIDs } from "../../lib/projects";
-import Head  from 'next/head';
+import Head from 'next/head';
 import Link from 'next/link';
 import { ExternalLinkIcon, ArrowSmLeftIcon } from '@heroicons/react/solid'
 import Image from 'next/image'
@@ -29,25 +29,27 @@ export function TwitterButton({ prjData }) {
 }
 
 export function HomepageButton({ prjData }) {
-    return (
-        <a href={prjData.homepage} target="_blank" rel="noreferrer">
-            <button type="button" className="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" >
-                <ExternalLinkIcon className="-ml-1 mr-2 h-5 w-5"></ExternalLinkIcon>
-                <span>Homepage</span>
-            </button>
-        </a>
-    )
+    if (prjData.homepage != "") {
+        return (
+            <a href={prjData.homepage} target="_blank" rel="noreferrer">
+                <button type="button" className="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" >
+                    <ExternalLinkIcon className="-ml-1 mr-2 h-5 w-5"></ExternalLinkIcon>
+                    <span>Homepage</span>
+                </button>
+            </a>
+        )
+    }
 }
 
 export function BackButton() {
     return (
-            <Link href="/">
-                
+        <Link href="/">
+
             <button type="button" className="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" >
                 <ArrowSmLeftIcon className="-ml-1 mr-2 h-5 w-5"></ArrowSmLeftIcon>
                 <span>Back</span>
             </button>
-            </Link>
+        </Link>
     )
 }
 
@@ -87,7 +89,7 @@ export default function Project({ prjData }) {
                                 Browse and search projects powered by Akash Network.
                             </p>
                             <p className="pt-12">
-                                <BackButton></BackButton>
+                                <BackButton/>
                             </p>
 
                             <div className="flex flex-col items-center justify-center pt-12">

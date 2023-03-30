@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getEcosystemData } from '../lib/projects';
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const allProjectsData = await getEcosystemData();
   return { props: { allProjectsData }
   };

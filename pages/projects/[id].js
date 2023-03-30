@@ -5,12 +5,7 @@ import { ExternalLinkIcon, ArrowSmLeftIcon } from '@heroicons/react/solid'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 
-export async function getStaticPaths() {
-    const paths = await getProjectIDs();
-    return { paths, fallback: false };
-}
-
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params }) {
     const prjData = await getProjectData(params.id);
     return { props: { prjData } };
 }
